@@ -1,0 +1,34 @@
+{
+  "name": "blast-game",
+  "version": "1.0.0",
+  "description": "BlastGame",
+  "main": "index.js",
+  "scripts": {
+    "favicon": "real-favicon generate ./faviconDescription.json ./src/faviconData.json ./dist",
+    "dev": "webpack serve --env NODE_ENV=development",
+    "build": "webpack --env NODE_ENV=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j-tap/blast-game.git"
+  },
+  "author": "j-tap",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/j-tap/blast-game/issues"
+  },
+  "homepage": "https://github.com/j-tap/blast-game#readme",
+  "dependencies": {
+    "phaser": "^3.55.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "babel-loader": "^8.2.5",
+    "copy-webpack-plugin": "^11.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.2"
+  }
+}
