@@ -1,9 +1,8 @@
 export default {
   area: {
-    x: 10,
-    y: 10,
+    x: 9,
+    y: 9,
   },
-  colorsCount: 5,
+  colorsCount: 9,
   maxMoves: 10,
-  minScore: 100
 }
