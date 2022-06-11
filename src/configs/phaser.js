@@ -1,15 +1,25 @@
 export default {
-  width: 800,
-  height: 600,
   parent: 'game',
   transparent: true,
-  type: 1, // Canvas
-  // loaderPath: '../assets/img/game/',
+  antialias: true,
   physics: {
     default: 'arcade',
     arcade: {
       gravity: { y: 600 },
       debug: false,
+    },
+  },
+  scale: {
+    parent: 'game',
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    min: {
+      width: 640,
+      height: 480,
+    },
+    max: {
+      width: 1980,
+      height: 1200,
     },
   },
 }

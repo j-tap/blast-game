@@ -11,6 +11,8 @@ import redBtnImg from '@/assets/img/game/red-btn.png'
 import scoreBgImg from '@/assets/img/game/score-bg.png'
 import topBarBgImg from '@/assets/img/game/top-bar-bg.png'
 import tilesSprImg from '@/assets/img/game/tiles-spr.png'
+import tilesJson from '@/assets/img/game/tiles_atlas.json'
+import tileClickSound from '@/assets/sounds/tile-click.mp3'
 import mainMusicSound from '@/assets/sounds/musics/main-music.mp3'
 
 export default class ScenePreload extends Scene
@@ -35,11 +37,10 @@ export default class ScenePreload extends Scene
     this.load.image('purple-btn', purpleBtnImg)
     this.load.image('red-btn', redBtnImg)
     this.load.image('score-bg', scoreBgImg)
-    this.load.image('tiles-spr', topBarBgImg)
-    this.load.image('top-bar-bg', tilesSprImg)
-
+    this.load.image('top-bar-bg', topBarBgImg)
+    this.load.atlas('tiles-spr', tilesSprImg, tilesJson)
+    this.load.audio('tile-click', [tileClickSound])
     this.load.audio('main-music', [mainMusicSound])
-
   }
 
   create ()
@@ -49,34 +50,37 @@ export default class ScenePreload extends Scene
 
   preloaderDraw ()
   {
-    this.preloader.progressBar = this.add.graphics()
-    this.preloader.progressBox = this.add.graphics()
-    this.preloader.progressBox.fillStyle(0x222222, 0.8)
-    this.preloader.progressBox.fillRect(240, 270, 320, 50)
+    const { width, height } = this.cameras.main
 
-    const { width } = this.cameras.main
-    const { height } = this.cameras.main
+    this.preloader.bar = this.add.graphics()
+    this.preloader.progress = this.add.graphics()
+
+    this.preloader.bar.fillStyle(0x000000, .7)
+    this.preloader.bar.fillRect(240, 270, 320, 50)
+    
     this.preloader.loadingText = this.make.text({
       x: width / 2,
       y: height / 2 - 50,
       text: 'Loading...',
       style: {
-        font: '20px Marvin',
-        fill: '#ffffff',
+        fontSize: 24,
+        fontFamily: 'Marvin',
+        color: '#ffffff',
       },
     })
-    this.preloader.loadingText.setOrigin(0.5, 0.5)
+    this.preloader.loadingText.setOrigin(.5)
 
     this.preloader.percentText = this.make.text({
       x: width / 2,
       y: height / 2 - 5,
       text: '0%',
       style: {
-        font: '18px Marvin',
-        fill: '#ffffff',
+        fontSize: 18,
+        fontFamily: 'Marvin',
+        color: '#ffffff',
       },
     })
-    this.preloader.percentText.setOrigin(0.5, 0.5)
+    this.preloader.percentText.setOrigin(.5)
 
     this.load.on('progress', (value) =>
     {
@@ -93,8 +97,8 @@ export default class ScenePreload extends Scene
 
   preloaderDestroy ()
   {
-    this.preloader.progressBar.destroy()
-    this.preloader.progressBox.destroy()
+    this.preloader.progress.destroy()
+    this.preloader.bar.destroy()
     this.preloader.loadingText.destroy()
     this.preloader.percentText.destroy()
   }
@@ -102,9 +106,9 @@ export default class ScenePreload extends Scene
   preloaderUpdateData (value)
   {
     this.preloader.percentText.setText(`${parseInt(value * 100)}%`)
-    this.preloader.progressBar.clear()
-    this.preloader.progressBar.fillStyle(0xffffff, 1)
-    this.preloader.progressBar.fillRect(250, 280, 300 * value, 30)
+    this.preloader.progress.clear()
+    this.preloader.progress.fillStyle(0xffffff, .2)
+    this.preloader.progress.fillRect(245, 275, 310 * value, 40)
   }
 
 }

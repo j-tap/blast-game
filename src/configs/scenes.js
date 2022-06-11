@@ -1,5 +1,3 @@
-export default [
-  {
-    minScore: 100,
-  },
-]
+export const scene1Config = {
+  minScore: 100,
+}

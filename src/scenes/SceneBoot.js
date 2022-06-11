@@ -1,6 +1,6 @@
 import { Scene } from 'phaser'
 
-import faviconImg from '@/assets/img/app/favicon.png'
+import redBtn from '@/assets/img/game/red-btn.png'
 
 export default class SceneBoot extends Scene
 {
@@ -11,19 +11,17 @@ export default class SceneBoot extends Scene
 
   preload ()
   {
-    this.load.image('logo', faviconImg)
-    this.make.text({
-      x: 0,
-      y: 0,
-      text: '',
-      style: {
-        font: '0px Marvin',
-      },
-    })
+    this.load.image('red-btn', redBtn)
   }
 
   create ()
   {
-    this.scene.start('ScenePreload')
+    const { centerX, centerY } = this.cameras.main
+
+    this.add.btn(centerX, centerY, 'Start', () =>
+    {
+      this.scene.start('ScenePreload')
+    })
+
   }
 }

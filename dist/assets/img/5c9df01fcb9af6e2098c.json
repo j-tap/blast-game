@@ -1,0 +1,43 @@
+{
+  "frames": [
+    {
+      "filename": "particle-3",
+      "frame": {
+        "w": 128,
+        "h": 128,
+        "x": 1,
+        "y": 1
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "particle-2",
+      "frame": {
+        "w": 128,
+        "h": 128,
+        "x": 130,
+        "y": 1
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "particle-1",
+      "frame": {
+        "w": 128,
+        "h": 128,
+        "x": 1,
+        "y": 130
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ]
+}
