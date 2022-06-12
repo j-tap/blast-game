@@ -1,8 +1,6 @@
-import { Scene } from 'phaser'
+import SceneGame from '@/objects/SceneGame'
 
-import defeatSound from '@/assets/sounds/scenes/scene-defeat/defeat-sound.mp3'
-
-export default class SceneDefeat extends Scene
+export default class SceneDefeat extends SceneGame
 {
   constructor ()
   {
@@ -11,33 +9,31 @@ export default class SceneDefeat extends Scene
 
   preload ()
   {
-    this.load.audio('defeat-sound', [defeatSound])
+    super.preload()
   }
 
   create ()
   {
-    this.audioManage()
+    super.create()
+
+    const { centerX, centerY } = this.cameras.main
+
+    this.playSound()
+
     this.drawTitle('Defeat')
+
+    this.add.btn(centerX, centerY + 80, 'Again', () =>
+      {
+        this.scene.start('Scene1')
+      })
+      .setScale(.35)
   }
 
-  audioManage ()
+  playSound ()
   {
     this.game.sound.stopAll()
     this.sound.add('defeat-sound', { volume: .6 })
       .play()
   }
 
-  drawTitle (text)
-  {
-    const { centerX, centerY } = this.cameras.main
-    const styleTitle = {
-      fontFamily: 'Marvin',
-      fontSize: 36,
-      textAlign: 'center',
-      color: '#ffffff',
-    }
-
-    this.add.text(centerX, centerY, text, styleTitle)
-      .setOrigin(0.5)
-  }
 }

@@ -4,11 +4,7 @@ export default class BtnGameObject extends GameObjects.Container
 {
   constructor(scene, x, y, text, action)
   {
-    super(scene, 'btn')
-
-    this.scene = scene
-    this.x = x
-    this.y = y
+    super(scene, x, y)
 
     const btnImage = this.scene.add.image(0, 0, 'red-btn')
       .setInteractive({ useHandCursor: true })

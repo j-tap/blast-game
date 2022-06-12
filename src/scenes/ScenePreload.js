@@ -1,4 +1,4 @@
-import { Scene } from 'phaser'
+import SceneGame from '@/objects/SceneGame'
 
 import bonusBgImg from '@/assets/img/game/bonus-bg.png'
 import gridBgImg from '@/assets/img/game/grid-bg.png'
@@ -15,17 +15,24 @@ import tilesJson from '@/assets/img/game/tiles_atlas.json'
 import tileClickSound from '@/assets/sounds/tile-click.mp3'
 import mainMusicSound from '@/assets/sounds/musics/main-music.mp3'
 
-export default class ScenePreload extends Scene
-{
-  preloader = {}
+import particlesSpr from '@/assets/img/scenes/scene-win/particles-spr.png'
+import particlesJson from '@/assets/img/scenes/scene-win/particles_atlas.json'
+import winSound from '@/assets/sounds/scenes/scene-win/win-sound.mp3'
 
+import defeatSound from '@/assets/sounds/scenes/scene-defeat/defeat-sound.mp3'
+
+export default class ScenePreload extends SceneGame
+{
   constructor ()
   {
     super('ScenePreload')
+    this.width = 600
   }
 
   preload ()
   {
+    super.preload()
+
     this.preloaderDraw()
 
     this.load.image('bonus-bg', bonusBgImg)
@@ -41,38 +48,46 @@ export default class ScenePreload extends Scene
     this.load.atlas('tiles-spr', tilesSprImg, tilesJson)
     this.load.audio('tile-click', [tileClickSound])
     this.load.audio('main-music', [mainMusicSound])
+
+    this.load.audio('defeat-sound', [defeatSound])
+    this.load.atlas('particles-spr', particlesSpr, particlesJson)
+    this.load.audio('win-sound', [winSound])
   }
 
   create ()
   {
+    super.create()
+
+    this.preloaderDestroy()
     this.scene.start('Scene1')
   }
 
   preloaderDraw ()
   {
-    const { width, height } = this.cameras.main
+    const { centerX, centerY } = this.cameras.main
 
-    this.preloader.bar = this.add.graphics()
-    this.preloader.progress = this.add.graphics()
+    this.preloader = this.add.container(centerX, centerY)
 
-    this.preloader.bar.fillStyle(0x000000, .7)
-    this.preloader.bar.fillRect(240, 270, 320, 50)
-    
-    this.preloader.loadingText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 50,
+    const progressLoader = this.add.progressLoader(0, 0, {
+        width: this.width,
+      })
+      .setName('progress')
+
+    const loadingText = this.make.text({
+      x: 0,
+      y: -36,
       text: 'Loading...',
       style: {
         fontSize: 24,
         fontFamily: 'Marvin',
-        color: '#ffffff',
+        color: '#011b42',
       },
     })
-    this.preloader.loadingText.setOrigin(.5)
+      .setOrigin(.5, 0)
 
-    this.preloader.percentText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 5,
+    const percentText = this.make.text({
+      x: 0,
+      y: 8,
       text: '0%',
       style: {
         fontSize: 18,
@@ -80,16 +95,14 @@ export default class ScenePreload extends Scene
         color: '#ffffff',
       },
     })
-    this.preloader.percentText.setOrigin(.5)
+      .setName('percentText')
+      .setOrigin(.5, 0)
+
+    this.preloader.add([progressLoader, loadingText, percentText])
 
     this.load.on('progress', (value) =>
     {
       this.preloaderUpdateData(value)
-    })
-
-    this.load.on('complete', () =>
-    {
-      this.preloaderDestroy()
     })
 
     this.timedEvent = this.time.delayedCall(3000, this.ready, [], this)
@@ -97,18 +110,16 @@ export default class ScenePreload extends Scene
 
   preloaderDestroy ()
   {
-    this.preloader.progress.destroy()
-    this.preloader.bar.destroy()
-    this.preloader.loadingText.destroy()
-    this.preloader.percentText.destroy()
+    this.preloader.destroy()
   }
 
   preloaderUpdateData (value)
   {
-    this.preloader.percentText.setText(`${parseInt(value * 100)}%`)
-    this.preloader.progress.clear()
-    this.preloader.progress.fillStyle(0xffffff, .2)
-    this.preloader.progress.fillRect(245, 275, 310 * value, 40)
+    this.preloader.getByName('percentText')
+      .setText(`${parseInt(value * 100)}%`)
+
+    this.preloader.getByName('progress')
+      .updateProgress(value)
   }
 
 }

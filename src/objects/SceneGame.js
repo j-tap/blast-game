@@ -2,26 +2,37 @@ import { Scene } from 'phaser'
 
 export default class SceneGame extends Scene
 {
-  constructor ()
-  {
-    super('SceneGame')
+  static params = {
+    colorBg: '#58c0f6',
+    fontFamily: 'Marvin',
   }
 
   preload ()
   {
-    this.load.setPath('assets/img/game/')
-    this.load.image('top-bar', 'top-bar-bg.png')
-    console.log('preload main');
+    this.cameras.main.setBackgroundColor(SceneGame.params.colorBg)
   }
 
   create ()
   {
-    console.log('create main');
-    this.scene.start('World')
+    //
   }
 
   update ()
   {
-    console.log('update main');
+    //
+  }
+
+  drawTitle (text)
+  {
+    const { centerX, centerY } = this.cameras.main
+    const styleTitle = {
+      fontFamily: SceneGame.params.fontFamily,
+      fontSize: 50,
+      textAlign: 'center',
+      color: '#011b42',
+    }
+
+    this.add.text(centerX, centerY, text, styleTitle)
+      .setOrigin(0.5)
   }
 }
