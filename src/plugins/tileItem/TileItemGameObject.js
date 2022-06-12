@@ -2,18 +2,16 @@ import { GameObjects, Math } from 'phaser'
 
 export default class TileItemGameObject extends GameObjects.Image
 {
-  constructor(scene, x, y, options = {})
+  constructor(scene, x, y, { tile })
   {
     const key = 'tiles-spr'
-    const colorsCount = 5
-
-    const atlas = scene.textures.get(key)
-    const n = Math.Between(0, colorsCount - 1)
-    const frame = atlas.getFrameNames()[n]
+    const { type, color, frame, posOnGrid } = tile
 
     super(scene, x, y, key, frame)
 
-    this.colorsCount = colorsCount
+    this.type = type
+    this.color = color
+    this.posOnGrid = posOnGrid
 
     this.#init()
   }
@@ -24,8 +22,18 @@ export default class TileItemGameObject extends GameObjects.Image
     this.setSize(170, 192)
     this.setScale(.32)
     this.setInteractive({ useHandCursor: true })
+
+    this.on('pointerdown', this.#pointerdownHandler)
     // console.log(this);
     // this.scene.physics.add.existing(this)
+  }
+
+  #pointerdownHandler ()
+  {
+    const tile = this
+    const tilesSimilar = this.scene.gridService.selectNearestByType(tile)
+
+    this.emit('click', { tile, tilesSimilar })
   }
 
 }
