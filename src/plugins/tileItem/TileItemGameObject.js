@@ -1,18 +1,20 @@
-import { GameObjects, Math } from 'phaser'
+import { GameObjects } from 'phaser'
 
 export default class TileItemGameObject extends GameObjects.Image
 {
-  constructor(scene, x, y, { tile })
+  constructor(scene, { tile })
   {
     const key = 'tiles-spr'
-    const { type, color, colorName, frame, posOnGrid } = tile
+    const { type, color, colorName, frame, posOnGrid, name } = tile
 
-    super(scene, x, y, key, frame)
+    super(scene, 0, 0, key, frame)
 
     this.type = type
     this.colorName = colorName
     this.color = color
     this.posOnGrid = posOnGrid
+    this.name = name
+    this.defaultScale = .32
 
     this.#init()
   }
@@ -21,8 +23,14 @@ export default class TileItemGameObject extends GameObjects.Image
   {
     this.setOrigin(.5)
     this.setSize(170, 192)
-    this.setScale(.32)
+    this.setScale(this.defaultScale)
     this.setInteractive({ useHandCursor: true })
+
+    const tileX = this.displayWidth * this.posOnGrid.x + this.displayWidth / 2
+    const tileY = this.displayHeight * this.posOnGrid.y + this.displayHeight / 2
+
+    this.setX(tileX)
+    this.setY(tileY)
 
     this.on('pointerdown', this.#pointerdownHandler)
   }
@@ -30,7 +38,7 @@ export default class TileItemGameObject extends GameObjects.Image
   #pointerdownHandler ()
   {
     const tile = this
-    const tilesSimilar = this.scene.gridService.selectNearestByType(tile)
+    const tilesSimilar = this.scene.gridService.getNearestTilesByType(tile)
 
     this.emit('click', { tile, tilesSimilar })
   }
@@ -46,6 +54,7 @@ export default class TileItemGameObject extends GameObjects.Image
     const duration = 2000
     const particlesSprite = 'particles-spr'
     const emitter = this.scene.add.particles(particlesSprite)
+      .setDepth(2)
 
     emitter.createEmitter({
         x: 0,
@@ -63,16 +72,20 @@ export default class TileItemGameObject extends GameObjects.Image
       })
       .explode(100, tx, ty)
 
-    this.scene.tweens.add({
-        targets: this,
-        scale: 0,
-        duration: 100,
-        onComplete: () =>
-        {
-          this.destroy()
-        },
+    return new Promise((resolve) =>
+      {
+        this.scene.tweens.add({
+            targets: this,
+            scale: 0,
+            duration: 100,
+            onComplete: () =>
+            {
+              // this.destroy()
+              this.setScale(this.defaultScale)
+              resolve()
+            },
+          })
       })
-
   }
 
 }

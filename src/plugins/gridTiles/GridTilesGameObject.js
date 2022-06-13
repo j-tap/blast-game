@@ -17,80 +17,97 @@ export default class GridTilesGameObject extends GameObjects.Container
     this.minSimilarTiles = minSimilarTiles
 
     this.scene.gridService = new GridService({
-        countTypes: this.tilesFrames.length,
-        grid,
-      })
+      frames: this.tilesFrames,
+      grid,
+    })
 
-    this.#drawBg()
-    this.drawGrid()
+    this.#draw()
   }
 
-  #drawBg ()
+  #draw ()
   {
     const gridImage = this.scene.add.image(0, 0, this.imageBg)
       .setOrigin(0)
       .setScale(.32)
 
-    this.add([gridImage])
+    this.containerTiles = this.scene.add.container(this.x + 16, this.y + 13)
+      .setDepth(1)
+
+    this.scene.gridService.eachGridData((x, y) =>
+      {
+        const tile = this.scene.gridService.getTile(x, y)
+        const tileObject = this.scene.add.tileItem({ tile })
+          .on('click', (...arg) => this.#tileClickHandler(...arg))
+
+        this.containerTiles.add(tileObject)
+      })
+
+    this.add(gridImage, this.containerTiles)
   }
 
   #tileClickHandler ({ tile, tilesSimilar })
   {
     const isCondition = tilesSimilar.length >= this.minSimilarTiles
+    const sendEmit = ['clickOnTile', { tile, tilesSimilar, isCondition }]
 
     if (isCondition)
     {
       this.removeTiles(tilesSimilar)
-      // this.drawGrid()
+        .then(() =>
+        {
+          this.emit.apply(this, sendEmit)
+        })
     }
-
-    this.emit('clickOnTile', { tile, tilesSimilar, isCondition })
+    else {
+      this.emit.apply(this, sendEmit)
+    }
   }
 
-  drawGrid ()
+  gridUpdate ()
   {
-    if (this.containerTiles)
-    {
-      this.containerTiles.destroy()
-    }
+    const tilesObjects = this.containerTiles.getAll()
 
-    const tilesObjects = []
-    const tileParams = {
-      tiles: this.tilesFrames
-    }
-
-    this.scene.gridService.generateGrid(tileParams, (tile) =>
+    tilesObjects.forEach(tileObject =>
       {
-        const tileObject = this.scene.add.tileItem(0, 0, { tile })
+        const { x, y } = tileObject.posOnGrid
+        const tile = this.scene.gridService.getTile(x, y)
 
-        tileObject
-          .setX(tileObject.displayWidth * tile.posOnGrid.x + tileObject.displayWidth / 2)
-          .setY(tileObject.displayHeight * tile.posOnGrid.y + tileObject.displayHeight / 2)
-          .on('click', (...arg) => this.#tileClickHandler(...arg))
-
-          tilesObjects.push(tileObject)
+        tileObject.type = tile.type
+        tileObject.colorName = tile.colorName
+        tileObject.color = tile.color
+        tileObject.setFrame(tile.frame)
       })
-
-    this.containerTiles = this.scene.add.container(16, 13, tilesObjects)
-
-    this.add(this.containerTiles)
   }
 
   removeTiles (positionsTiles)
   {
-    const tiles = this.containerTiles.getAll()
+    const tilesObjects = this.containerTiles.getAll()
 
-    positionsTiles.forEach(pos =>
+    this.scene.gridService.removeTiles(positionsTiles)
+
+    const promises = []
+
+    positionsTiles.forEach((pos, i) =>
       {
         const { x, y } = pos
 
-        tiles.forEach(tile =>
+        promises[i] = new Promise((resolve) =>
           {
-            if (tile.checkPosOnGrid(x, y)) tile.remove()
+            tilesObjects.forEach(tile =>
+              {
+                if (tile.checkPosOnGrid(x, y))
+                {
+                  tile.remove()
+                    .then(() => resolve())
+                }
+              })
           })
       })
 
-    this.scene.gridService.removeTiles(positionsTiles)
+    return Promise.all(promises).then(() =>
+      {
+        this.scene.gridService.fallTiles()
+      })
   }
 
 }

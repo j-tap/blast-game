@@ -41,6 +41,8 @@ export default class SceneLevel extends SceneGame
 
     this.scoreBar.updateMove(this.movesCount)
     this.scoreBar.updateScore(this.scoresCount)
+
+    this.grid.gridUpdate()
   }
 
   audioManage ()

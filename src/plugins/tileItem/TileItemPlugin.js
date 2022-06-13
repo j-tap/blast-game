@@ -9,8 +9,8 @@ export default class TileItemPlugin extends Plugins.BasePlugin
     pluginManager.registerGameObject('tileItem', this.create)
   }
 
-  create (x, y, options)
+  create (options)
   {
-    return this.displayList.add(new TileItemGameObject(this.scene, x, y, options))
+    return this.displayList.add(new TileItemGameObject(this.scene, options))
   }
 }
