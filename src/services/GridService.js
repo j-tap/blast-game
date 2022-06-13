@@ -41,9 +41,7 @@ export default class GridService
           const tileData = this.generateTile({ tiles })
           this.#addToGridModel(x, y, tileData)
         }
-
         const tile = this.gridModel[x][y]
-
         action(tile)
       }
     }
@@ -123,9 +121,9 @@ export default class GridService
     Object.assign(this.gridModel[x][y], data)
   }
 
-  removeTiles (tiles)
+  removeTiles (positionsTiles)
   {
-    tiles.forEach(({ x, y }) =>
+    positionsTiles.forEach(({ x, y }) =>
       {
         this.resetTile({ x, y })
       })

@@ -5,11 +5,12 @@ export default class TileItemGameObject extends GameObjects.Image
   constructor(scene, x, y, { tile })
   {
     const key = 'tiles-spr'
-    const { type, color, frame, posOnGrid } = tile
+    const { type, color, colorName, frame, posOnGrid } = tile
 
     super(scene, x, y, key, frame)
 
     this.type = type
+    this.colorName = colorName
     this.color = color
     this.posOnGrid = posOnGrid
 
@@ -34,27 +35,44 @@ export default class TileItemGameObject extends GameObjects.Image
     this.emit('click', { tile, tilesSimilar })
   }
 
+  checkPosOnGrid (x, y)
+  {
+    return this.posOnGrid.x === x && this.posOnGrid.y === y
+  }
+
   remove ()
   {
+    const { tx, ty } = this.getWorldTransformMatrix()
+    const duration = 2000
     const particlesSprite = 'particles-spr'
-    const emiter = this.scene.add.particles(particlesSprite)
-      .createEmitter({
-        x: 400,
-        y: 400,
-        lifespan: 4000,
-        angle: { min: 225, max: 315 },
-        speed: { min: 300, max: 500 },
-        scale: { start: 0.6, end: 0 },
-        gravityY: 300,
-        bounce: 0.9,
-        bounds: { x: 250, y: 0, w: 350, h: 0 },
-        collideTop: false,
-        collideBottom: false,
+    const emitter = this.scene.add.particles(particlesSprite)
+
+    emitter.createEmitter({
+        x: 0,
+        y: 0,
         blendMode: 'ADD',
-        frame: [ 'particle-1', 'particle-2', 'particle-3' ],
+        lifespan: duration,
+        alpha: { 'start': 1, 'end': 0 },
+        speed: { 'min': 0, 'max': 200 },
+        scale: { 'start': .4, 'end': 0 },
+        gravityY: 600,
+        bounce: 1,
+        maxParticles: 15,
+        tint: [this.color],
+        frame: ['particle-1'],
+      })
+      .explode(100, tx, ty)
+
+    this.scene.tweens.add({
+        targets: this,
+        scale: 0,
+        duration: 100,
+        onComplete: () =>
+        {
+          this.destroy()
+        },
       })
 
-    // this.destroy()
   }
 
 }

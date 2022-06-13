@@ -34,6 +34,19 @@ export default class GridTilesGameObject extends GameObjects.Container
     this.add([gridImage])
   }
 
+  #tileClickHandler ({ tile, tilesSimilar })
+  {
+    const isCondition = tilesSimilar.length >= this.minSimilarTiles
+
+    if (isCondition)
+    {
+      this.removeTiles(tilesSimilar)
+      // this.drawGrid()
+    }
+
+    this.emit('clickOnTile', { tile, tilesSimilar, isCondition })
+  }
+
   drawGrid ()
   {
     if (this.containerTiles)
@@ -63,17 +76,21 @@ export default class GridTilesGameObject extends GameObjects.Container
     this.add(this.containerTiles)
   }
 
-  #tileClickHandler ({ tile, tilesSimilar })
+  removeTiles (positionsTiles)
   {
-    const isCondition = tilesSimilar.length >= this.minSimilarTiles
+    const tiles = this.containerTiles.getAll()
 
-    if (isCondition)
-    {
-      this.scene.gridService.removeTiles(tilesSimilar)
-      this.drawGrid()
-    }
+    positionsTiles.forEach(pos =>
+      {
+        const { x, y } = pos
 
-    this.emit('clickOnTile', { tile, tilesSimilar, isCondition })
+        tiles.forEach(tile =>
+          {
+            if (tile.checkPosOnGrid(x, y)) tile.remove()
+          })
+      })
+
+    this.scene.gridService.removeTiles(positionsTiles)
   }
 
 }

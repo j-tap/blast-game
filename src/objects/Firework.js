@@ -2,7 +2,7 @@ import { Math } from 'phaser'
 
 export default class Firework
 {
-  emiter
+  emitter
 
   constructor (scene, options = {})
   {
@@ -26,7 +26,7 @@ export default class Firework
   {
     const { maxSpeed, scale, life, gravity } = this.options
 
-    this.emiter = this.scene.add.particles(this.particlesSprite)
+    this.emitter = this.scene.add.particles(this.particlesSprite)
       .createEmitter({
         speed: { min: -100, max: maxSpeed },
         angle: { min: 0, max: 360 },
@@ -48,8 +48,8 @@ export default class Firework
     const x = Math.Between(centerX / 2, width / 1.5)
     const y = Math.Between(centerY / 3, centerY / 1.2)
 
-    this.emiter.active = true
-    this.emiter.explode(explosionForce, x, y)
+    this.emitter.active = true
+    this.emitter.explode(explosionForce, x, y)
   }
 
   run (repeat = 1)
