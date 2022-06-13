@@ -15,6 +15,8 @@ export default class TopBarGameObject extends GameObjects.Container
   #draw ()
   {
     const { centerX } = this.scene.cameras.main
+    const { fontFamily, colorTextBar } = this.scene.configGame
+
     this.setX(centerX)
 
     const topBarImage = this.scene.add.image(0, 0, 'top-bar-bg')
@@ -27,8 +29,8 @@ export default class TopBarGameObject extends GameObjects.Container
         text: 'Progress',
         style: {
           fontSize: 16,
-          fontFamily: 'Marvin',
-          color: '#ffffff',
+          fontFamily: fontFamily,
+          color: colorTextBar,
         },
       })
       .setOrigin(.82, 0)

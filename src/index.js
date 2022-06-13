@@ -11,9 +11,11 @@ import TopBarPlugin from '@/plugins/topBar/TopBarPlugin'
 
 import SceneBoot from '@/scenes/SceneBoot'
 import ScenePreload from '@/scenes/ScenePreload'
+import SceneNextLevel from '@/scenes/SceneNextLevel'
 import SceneWin from '@/scenes/SceneWin'
 import SceneDefeat from '@/scenes/SceneDefeat'
 import Scene1 from '@/scenes/Scene1'
+import Scene2 from '@/scenes/Scene2'
 
 require('@/assets/styles/index.styl')
 
@@ -32,9 +34,11 @@ const config = {
   scene: [
     SceneBoot,
     ScenePreload,
+    SceneNextLevel,
     SceneWin,
     SceneDefeat,
     Scene1,
+    Scene2,
   ],
 }
 

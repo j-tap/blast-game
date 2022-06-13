@@ -31,11 +31,16 @@ export default class GridTilesGameObject extends GameObjects.Container
       .setOrigin(0)
       .setScale(.32)
 
-    this.add(gridImage)
+    this.add([gridImage])
   }
 
   drawGrid ()
   {
+    if (this.containerTiles)
+    {
+      this.containerTiles.destroy()
+    }
+
     const tilesObjects = []
     const tileParams = {
       tiles: this.tilesFrames
@@ -46,16 +51,16 @@ export default class GridTilesGameObject extends GameObjects.Container
         const tileObject = this.scene.add.tileItem(0, 0, { tile })
 
         tileObject
-          .setX(tileObject.displayWidth * tile.posOnGrid.x)
-          .setY(tileObject.displayHeight * tile.posOnGrid.y)
+          .setX(tileObject.displayWidth * tile.posOnGrid.x + tileObject.displayWidth / 2)
+          .setY(tileObject.displayHeight * tile.posOnGrid.y + tileObject.displayHeight / 2)
           .on('click', (...arg) => this.#tileClickHandler(...arg))
 
           tilesObjects.push(tileObject)
       })
 
-    const containerTiles = this.scene.add.container(16, 13, tilesObjects)
+    this.containerTiles = this.scene.add.container(16, 13, tilesObjects)
 
-    this.add(containerTiles)
+    this.add(this.containerTiles)
   }
 
   #tileClickHandler ({ tile, tilesSimilar })

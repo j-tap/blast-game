@@ -7,6 +7,11 @@ export default class SceneDefeat extends SceneGame
     super('SceneDefeat')
   }
 
+  init ({ nextScene })
+  {
+    this.nextScene = nextScene
+  }
+
   preload ()
   {
     super.preload()
@@ -24,7 +29,7 @@ export default class SceneDefeat extends SceneGame
 
     this.add.btn(centerX, centerY + 80, 'Again', () =>
       {
-        this.scene.start('Scene1')
+        this.scene.start(this.nextScene)
       })
       .setScale(.35)
   }

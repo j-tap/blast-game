@@ -129,6 +129,7 @@ module.exports = (env) =>
 					'viewport': { name: 'viewport', content: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
 					'content-type': { 'http-equiv': 'Content-Type', content: 'text/html; charset=utf-8' },
 					'x-ua-compatible': { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
+					'title': { name: 'theme-color', contnet: '#00539e' },
 					'title': { name: 'title', contnet: title },
 					'description': { name: 'description', contnet: description },
 					'keyword': { name: 'keywords', content: '' },

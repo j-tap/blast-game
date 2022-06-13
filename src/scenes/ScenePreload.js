@@ -5,7 +5,6 @@ import gridBgImg from '@/assets/img/game/grid-bg.png'
 import iconUnknowImg from '@/assets/img/game/icon-unknow.png'
 import pauseBtnImg from '@/assets/img/game/pause-btn.png'
 import plusBtnImg from '@/assets/img/game/plus-btn.png'
-import progressBarImg from '@/assets/img/game/progress-bar.png'
 import purpleBtnImg from '@/assets/img/game/purple-btn.png'
 import redBtnImg from '@/assets/img/game/red-btn.png'
 import scoreBgImg from '@/assets/img/game/score-bg.png'
@@ -40,7 +39,6 @@ export default class ScenePreload extends SceneGame
     this.load.image('icon-unknow', iconUnknowImg)
     this.load.image('pause-btn', pauseBtnImg)
     this.load.image('plus-btn', plusBtnImg)
-    this.load.image('progress-bar', progressBarImg)
     this.load.image('purple-btn', purpleBtnImg)
     this.load.image('red-btn', redBtnImg)
     this.load.image('score-bg', scoreBgImg)
@@ -65,6 +63,7 @@ export default class ScenePreload extends SceneGame
   preloaderDraw ()
   {
     const { centerX, centerY } = this.cameras.main
+    const { fontFamily, colorTextBar, colorTextTitle } = this.configGame
 
     this.preloader = this.add.container(centerX, centerY)
 
@@ -79,8 +78,8 @@ export default class ScenePreload extends SceneGame
       text: 'Loading...',
       style: {
         fontSize: 24,
-        fontFamily: 'Marvin',
-        color: '#011b42',
+        fontFamily,
+        color: colorTextTitle,
       },
     })
       .setOrigin(.5, 0)
@@ -91,8 +90,8 @@ export default class ScenePreload extends SceneGame
       text: '0%',
       style: {
         fontSize: 18,
-        fontFamily: 'Marvin',
-        color: '#ffffff',
+        fontFamily,
+        color: colorTextBar,
       },
     })
       .setName('percentText')

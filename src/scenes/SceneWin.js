@@ -1,5 +1,3 @@
-import { Math } from 'phaser'
-
 import SceneGame from '@/objects/SceneGame'
 import Firework from '@/objects/Firework'
 
@@ -8,6 +6,11 @@ export default class SceneWin extends SceneGame
   constructor ()
   {
     super('SceneWin')
+  }
+
+  init ({ nextScene })
+  {
+    this.nextScene = nextScene
   }
 
   preload ()
@@ -28,9 +31,9 @@ export default class SceneWin extends SceneGame
     const firework = new Firework(this)
     firework.run(10)
 
-    this.add.btn(centerX, centerY + 80, 'Again', () =>
+    this.add.btn(centerX, centerY + 80, 'Finish', () =>
       {
-        this.scene.start('Scene1')
+        this.scene.start('SceneBoot')
       })
       .setScale(.35)
   }

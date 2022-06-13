@@ -18,7 +18,7 @@
 		},
 		"windows": {
 			"pictureAspect": "noChange",
-			"backgroundColor": "#2b5797",
+			"backgroundColor": "#00539e",
 			"onConflict": "override",
 			"assets": {
 				"windows80Ie10Tile": false,
@@ -47,7 +47,7 @@
 		"safariPinnedTab": {
 			"pictureAspect": "blackAndWhite",
 			"threshold": 67.96875,
-			"themeColor": "#5bbad5"
+			"themeColor": "#00539e"
 		}
 	},
 	"settings": {

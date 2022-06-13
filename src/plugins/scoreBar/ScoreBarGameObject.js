@@ -15,8 +15,8 @@ export default class ScoreBarGameObject extends GameObjects.Container
   #draw ()
   {
     const { width } = this.scene.cameras.main
-    const fontFamily = 'Marvin'
-    const color = '#ffffff'
+    const { fontFamily, colorTextBar } = this.scene.configGame
+    const color = colorTextBar
 
     const scoreImage = this.scene.add.image(0, 0, this.imageBg)
       .setOrigin(0, 0)

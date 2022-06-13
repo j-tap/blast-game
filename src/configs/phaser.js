@@ -14,12 +14,12 @@ export default {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     min: {
-      width: 640,
-      height: 480,
+      width: 320,
+      height: 320,
     },
     max: {
       width: 1980,
-      height: 1200,
+      height: 1980,
     },
   },
 }

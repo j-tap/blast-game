@@ -39,10 +39,12 @@ export default class GridService
         if (!this.gridModel[x] || !this.gridModel[x][y] || this.gridModel[x][y].empty)
         {
           const tileData = this.generateTile({ tiles })
-          const tile = this.#addToGridModel(x, y, tileData)
-
-          action(tile)
+          this.#addToGridModel(x, y, tileData)
         }
+
+        const tile = this.gridModel[x][y]
+
+        action(tile)
       }
     }
   }

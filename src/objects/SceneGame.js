@@ -1,15 +1,13 @@
 import { Scene } from 'phaser'
 
+import configGame from '@/configs/game'
+
 export default class SceneGame extends Scene
 {
-  static params = {
-    colorBg: '#58c0f6',
-    fontFamily: 'Marvin',
-  }
-
   preload ()
   {
-    this.cameras.main.setBackgroundColor(SceneGame.params.colorBg)
+    this.configGame = configGame
+    this.cameras.main.setBackgroundColor(this.configGame.colorBg)
   }
 
   create ()
@@ -22,17 +20,17 @@ export default class SceneGame extends Scene
     //
   }
 
-  drawTitle (text)
+  drawTitle (text, x = null, y = null)
   {
     const { centerX, centerY } = this.cameras.main
     const styleTitle = {
-      fontFamily: SceneGame.params.fontFamily,
+      fontFamily: this.configGame.fontFamily,
       fontSize: 50,
       textAlign: 'center',
-      color: '#011b42',
+      color: this.configGame.colorTextTitle,
     }
 
-    this.add.text(centerX, centerY, text, styleTitle)
+    this.add.text(x || centerX, y || centerY, text, styleTitle)
       .setOrigin(0.5)
   }
 }
