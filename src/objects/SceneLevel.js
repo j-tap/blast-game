@@ -76,20 +76,6 @@ export default class SceneLevel extends SceneGame
       this.topBar.updateProgress(progress)
       // this.cameras.main.shake(150, 0.008)
     }
-    else {
-      this.tweens.add({
-        targets: tile,
-        rotation: { from: -.15, to: .15 },
-        duration: 80,
-        yoyo: false,
-        repeat: 2,
-        onComplete ()
-        {
-          tile.rotation = 0
-        }
-      })
-      
-    }
 
     if (this.scoresCount >= this.targetScoresCount)
     {
