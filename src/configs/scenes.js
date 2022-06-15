@@ -4,16 +4,9 @@ export const scene1 = {
     h: 9,
   },
   tiles: ['tile-1', 'tile-2', 'tile-3', 'tile-4', 'tile-5'],
-  minScore: 100,
+  minScore: 150,
   minTilesTarget: 2,
-  bonuses: [
-    {
-      name: 'bomb',
-      title: 'Bomb!',
-      amount: 1,
-      params: { range: 1 },
-    },
-  ],
+  bonuses: [],
   autoShufl: 10,
   maxMoves: 10,
   nextScene: 'Scene2',
@@ -25,7 +18,7 @@ export const scene2 = {
     h: 9,
   },
   tiles: ['tile-1', 'tile-2', 'tile-3', 'tile-4', 'tile-5'],
-  minScore: 300,
+  minScore: 500,
   minTilesTarget: 2,
   bonuses: [
     {

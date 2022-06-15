@@ -47,4 +47,11 @@ export default class Bonus
     }
     return this
   }
+
+  reset ()
+  {
+    this.amountLeft = this.amount
+    this.active = false
+    return this
+  }
 }

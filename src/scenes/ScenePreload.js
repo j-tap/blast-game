@@ -2,9 +2,6 @@ import SceneGame from '@/objects/SceneGame'
 
 import bonusBgImg from '@/assets/img/game/bonus-bg.png'
 import gridBgImg from '@/assets/img/game/grid-bg.png'
-import iconUnknowImg from '@/assets/img/game/icon-unknow.png'
-import pauseBtnImg from '@/assets/img/game/pause-btn.png'
-import plusBtnImg from '@/assets/img/game/plus-btn.png'
 import purpleBtnImg from '@/assets/img/game/purple-btn.png'
 import redBtnImg from '@/assets/img/game/red-btn.png'
 import scoreBgImg from '@/assets/img/game/score-bg.png'
@@ -36,9 +33,6 @@ export default class ScenePreload extends SceneGame
 
     this.load.image('bonus-bg', bonusBgImg)
     this.load.image('grid-bg', gridBgImg)
-    this.load.image('icon-unknow', iconUnknowImg)
-    this.load.image('pause-btn', pauseBtnImg)
-    this.load.image('plus-btn', plusBtnImg)
     this.load.image('purple-btn', purpleBtnImg)
     this.load.image('red-btn', redBtnImg)
     this.load.image('score-bg', scoreBgImg)

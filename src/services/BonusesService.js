@@ -19,6 +19,11 @@ export default class BonusesService
     return this.#bonuses
   }
 
+  getBonusesList ()
+  {
+    return Object.values(this.#bonuses)
+  }
+
   getBonus (name)
   {
     return this.#bonuses[name]
@@ -26,14 +31,22 @@ export default class BonusesService
 
   getActive ()
   {
-    const bonuses = this.getBonuses()
-    return Object.keys(bonuses).find(n => bonuses[n].active)
+    return this.getBonusesList()
+      .find(o => o.active)
+      ?.name
   }
 
   setActive (name)
   {
-    const bonuses = this.getBonuses()
-    Object.keys(bonuses).find(n => bonuses[n].activate(n === name))
+    this.getBonusesList()
+      .map(o => o.activate(o.name === name))
+    return this
+  }
+
+  reset()
+  {
+    this.getBonusesList()
+      .find(o => o.reset())
     return this
   }
 }

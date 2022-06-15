@@ -31,7 +31,7 @@ export default class BonusBlockGameObject extends GameObjects.Container
     const titleText = this.scene.make.text({
         x: this.imageBg.displayWidth / 2,
         y: this.imageBg.displayHeight / 4,
-        text: this.title,
+        text: this.bonus.title,
         style: styleText,
       })
       .setOrigin(.5, 0)

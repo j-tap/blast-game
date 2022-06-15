@@ -66,10 +66,10 @@ export default class SceneLevel extends SceneGame
 
   draw ()
   {
+    this.bonusesBlocks = []
     const { fontFamily, colorTextBar } = this.configGame
     const { width } = this.cameras.main
-    this.bonusesBlocks = []
-    const bonuses = this.bonusesService.getBonuses()
+    const bonuses = this.bonusesService.getBonusesList()
     const padding = 20
     const styleText = {
       fontFamily,
@@ -86,7 +86,7 @@ export default class SceneLevel extends SceneGame
     this.scoreBar = this.add.scoreBar(0, 160)
     this.scoreBar.setX(width - this.scoreBar.displayWidth - padding)
 
-    if (Object.keys(bonuses).length)
+    if (bonuses.length)
     {
       this.add.text(
           width - this.scoreBar.displayWidth / 2 - padding,
@@ -97,12 +97,15 @@ export default class SceneLevel extends SceneGame
         .setOrigin(.5, 0)
     }
 
-    Object.keys(bonuses).forEach((name, i) =>
+    bonuses.forEach((bonus, i) =>
       {
-        const y = this.scoreBar.y + this.scoreBar.displayHeight + 60
-        this.bonusesBlocks[name] = this.add.bonusBlock(0, y, bonuses[name])
-        const x = width - this.scoreBar.displayWidth - 70 + this.bonusesBlocks[name].displayWidth * i
-        this.bonusesBlocks[name].setX(x)
+        const { displayWidth, displayHeight, y } = this.scoreBar
+        const bonusY = y + displayHeight + 60
+
+        this.bonusesBlocks[bonus.name] = this.add.bonusBlock(0, bonusY, bonus)
+
+        const bonusX = width - displayWidth - 70 + this.bonusesBlocks[bonus.name].displayWidth * i
+        this.bonusesBlocks[bonus.name].setX(bonusX)
       })
   }
 
@@ -155,6 +158,8 @@ export default class SceneLevel extends SceneGame
     this.scoresService
       .resetScores()
       .resetMoves()
+
+    this.bonusesService.reset()
 
     this.scene.stop()
   }

@@ -8,7 +8,6 @@ export default class GridTilesGameObject extends GameObjects.Container
   {
     super(scene, x, y)
 
-    this.scene = scene
     this.imageBg = 'grid-bg'
     this.grid = grid
     this.tilesFrames = tiles
