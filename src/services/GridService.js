@@ -1,39 +1,17 @@
-import { Math, Utils } from 'phaser'
-
-import tileModel from '@/models/TileModel'
-import tilesConfig from '@/configs/tiles'
+import Tile from '@/objects/Tile'
 
 export default class GridService
 {
   constructor ({ frames, grid })
   {
-    this.gridModel = {}
+    this.gridTiles = {}
     this.frames = frames
-    this.countTypes = this.frames.length
     this.grid = grid
-    this.tileModel = tileModel
 
-    this.prevIndex = 0
+    this.createdIndex = 0
     this.posByName = {}
 
     this.#generate()
-  }
-
-  #addToGridModel (x, y, tile)
-  {
-    if (!this.gridModel[x]) this.gridModel[x] = {}
-
-    const data = {
-      ...this.tileModel,
-      ...tile,
-      posOnGrid: { x, y },
-    }
-
-    this.gridModel[x][y] = data
-
-    this.#setPosByName(data.name, { x, y })
-
-    return data
   }
 
   #setPosByName (name, { x, y })
@@ -59,26 +37,6 @@ export default class GridService
         }
       }
     }
-  }
-
-  #createTile ()
-  {
-    const tile = this.#randomTile()
-    const name = `tl-${this.prevIndex}`
-    this.prevIndex++
-
-    return { ...tile, name }
-  }
-
-  #randomTile ()
-  {
-    const n = Math.Between(0, this.countTypes - 1)
-    const frame = this.frames[n]
-    const empty = false
-    const tile = { ...tilesConfig[frame], empty }
-
-    if (!tile) throw(`Not found frame: ${frame}`)
-    return tile
   }
 
   #getTileOnTopRecursive (stertX, startY)
@@ -123,7 +81,7 @@ export default class GridService
 
       result.push({ x, y })
 
-      this.#updateTileModel (x, y, { check: true })
+      this.#updateTile (x, y, { check: true })
 
       func(x - 1, y)
       func(x + 1, y)
@@ -133,21 +91,16 @@ export default class GridService
     
     func(startX, startY)
 
-    this.#resetCheckTiles()
+    this.#updateTilesModelAll({ check: false })
 
     return result
   }
 
-  #resetCheckTiles ()
-  {
-    this.#updateTilesModelAll({ check: false })
-  }
-
   #removeTile (x, y)
   {
-    const { posOnGrid } = this.getTile(x, y)
     this.#removePosByName({ x, y })
-    return this.#updateTileModel(x, y, { ...this.tileModel, posOnGrid })
+    const tile = this.getTile(x, y)
+    tile.clear()
   }
 
   #relocationTile (tile, x, y)
@@ -155,7 +108,7 @@ export default class GridService
     const prevX = tile.posOnGrid.x
     const prevY = tile.posOnGrid.y
 
-    this.#updateTileModel(x, y, tile)
+    this.#updateTile(x, y, tile)
     this.#removeTile(prevX, prevY)
   }
 
@@ -163,25 +116,22 @@ export default class GridService
   {
     this.eachGrid((x, y) =>
     {
-      this.#updateTileModel(x, y, data)
+      this.#updateTile(x, y, data)
     })
   }
 
-  #updateTileModel (x, y, data = {})
+  #updateTile (x, y, data = {})
   {
-    if (this.gridModel && this.gridModel[x] && this.gridModel[x][y])
+    if (this.getGridTiles())
     {
-      if (data.name)
+      const tile = this.getTile(x, y)
+
+      if (tile)
       {
-        this.#setPosByName(data.name, { x, y })
+        if (data.name) this.#setPosByName(data.name, { x, y })
+
+        return tile.update(data)
       }
-      const oldData = Utils.Objects.DeepCopy(this.getTile(x, y))
-      const newData = Utils.Objects.DeepCopy(data)
-      const posOnGrid = { x, y }
-
-      this.gridModel[x][y] = { ...oldData, ...newData, posOnGrid }
-
-      return this.getTile(x, y)
     }
     return null
   }
@@ -190,25 +140,50 @@ export default class GridService
   {
     this.eachGrid((x, y) =>
     {
-      const tileNew = this.#createTile()
-      this.#addToGridModel(x, y, tileNew)
+      this.addToGridTiles(x, y, this.createTileRandom())
     })
   }
 
-  getGridData ()
+  addToGridTiles (x, y, tileData)
   {
-    if (this.gridModel && Object.keys(this.gridModel).length)
+    if (!this.gridTiles[x]) this.gridTiles[x] = {}
+
+    this.gridTiles[x][y] = tileData.setPosition(x, y)
+
+    const tile = this.getTile(x, y)
+
+    this.#setPosByName(tile.name, { x, y })
+
+    return tile
+  }
+
+  createTileRandom ()
+  {
+    const result = new Tile({
+        frames: this.frames,
+        name: `tl-${this.createdIndex}`,
+      })
+      .random()
+
+    this.createdIndex++
+
+    return result
+  }
+
+  getGridTiles ()
+  {
+    if (this.gridTiles && Object.keys(this.gridTiles).length)
     {
-      return this.gridModel
+      return this.gridTiles
     }
     return null
   }
 
   getTile (x, y)
   {
-    const grid = this.getGridData()
+    const grid = this.getGridTiles()
 
-    if (grid && this.gridModel[x] && this.gridModel[x][y])
+    if (grid && this.gridTiles[x] && this.gridTiles[x][y])
     {
       return grid[x][y]
     }
@@ -217,11 +192,11 @@ export default class GridService
 
   getTileByName (name)
   {
-    const pos = this.posByName[name]
+    const posOnGrid = this.posByName[name]
 
-    if (pos)
+    if (posOnGrid)
     {
-      const { x, y } = pos
+      const { x, y } = posOnGrid
       const tile = this.getTile(x, y)
 
       if (tile && tile.name === name)
@@ -260,7 +235,7 @@ export default class GridService
 
   fallTiles ()
   {
-    if (!this.getGridData()) return
+    if (!this.getGridTiles()) return
 
     const tilesEmpty = []
 
@@ -284,8 +259,7 @@ export default class GridService
 
     tilesEmpty.forEach(({ x, y }) =>
     {
-      const tileNew = this.#createTile()
-      this.#addToGridModel(x, y, tileNew)
+      this.addToGridTiles(x, y, this.createTileRandom())
     })
   }
 
@@ -293,6 +267,16 @@ export default class GridService
   {
     const { type, posOnGrid: { x, y } } = tile
     return this.#getNearestRecursive(x, y, (o) => o.type === type)
+  }
+
+  getNearestTilesRadius (tile, radius)
+  {
+    const { type, posOnGrid: { x, y } } = tile
+    return this.#getNearestRecursive(x, y, (o) =>
+      {
+        return Math.abs(x - o.posOnGrid.x) <= radius
+          && Math.abs(y - o.posOnGrid.y) <= radius
+      })
   }
 
   shuffle ()

@@ -12,7 +12,10 @@ export default class TileItemGameObject extends GameObjects.Image
     this.type = type
     this.colorName = colorName
     this.color = color
-    this.posOnGrid = posOnGrid
+    this.posOnGrid = {
+      x: posOnGrid.x,
+      y:posOnGrid.y,
+    }
     this.name = name
     this.empty = empty
     this.defaultScale = .32
@@ -96,9 +99,7 @@ export default class TileItemGameObject extends GameObjects.Image
   #pointerdownHandler ()
   {
     const tile = this
-    const tilesSimilar = this.scene.gridService.getNearestTilesByType(tile)
-
-    this.emit('click', { tile, tilesSimilar })
+    this.emit('click', { tile })
   }
 
   #calcCoords ()
@@ -136,7 +137,13 @@ export default class TileItemGameObject extends GameObjects.Image
 
     if (coords.y !== this.y)
     {
-      this.fallTile(coords.y)
+      if (this.parentContainer.getData('allowFall'))
+      {
+        this.fallTile(coords.y)
+      }
+      else {
+        this.setY(coords.y)
+      }
     }
   }
 

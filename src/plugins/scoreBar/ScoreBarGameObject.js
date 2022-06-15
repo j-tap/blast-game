@@ -2,9 +2,9 @@ import { GameObjects } from 'phaser'
 
 export default class ScoreBarGameObject extends GameObjects.Container
 {
-  constructor(scene, options = {})
+  constructor(scene, x, y, options = {})
   {
-    super(scene, 0, 160)
+    super(scene, x, y)
 
     this.options = options
     this.imageBg = 'score-bg'
@@ -14,7 +14,6 @@ export default class ScoreBarGameObject extends GameObjects.Container
 
   #draw ()
   {
-    const { width } = this.scene.cameras.main
     const { fontFamily, colorTextBar } = this.scene.configGame
     const color = colorTextBar
 
@@ -60,7 +59,7 @@ export default class ScoreBarGameObject extends GameObjects.Container
       .setOrigin(.5, 0)
 
     this.add([scoreImage, movesText, scoreTitleText, scoreNumText])
-      .setX(width - scoreImage.displayWidth - 20)
+    this.setSize(scoreImage.displayWidth, scoreImage.displayHeight)
   }
 
   updateMove (value)

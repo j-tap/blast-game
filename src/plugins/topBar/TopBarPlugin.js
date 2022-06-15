@@ -9,8 +9,8 @@ export default class TopBarPlugin extends Plugins.BasePlugin
     pluginManager.registerGameObject('topBar', this.create)
   }
 
-  create (options)
+  create (x, y, options)
   {
-    return this.displayList.add(new TopBarGameObject(this.scene, options))
+    return this.displayList.add(new TopBarGameObject(this.scene, x, y, options))
   }
 }

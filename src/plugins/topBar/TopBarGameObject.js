@@ -2,12 +2,13 @@ import { GameObjects } from 'phaser'
 
 export default class TopBarGameObject extends GameObjects.Container
 {
-  constructor(scene, options = {})
+  constructor(scene, x, y, options = {})
   {
-    super(scene, 0, 0)
+    super(scene, x, y)
 
     this.options = options
     this.widthProgress = 1040
+    this.imageBg = 'top-bar-bg'
 
     this.#draw()
   }
@@ -19,7 +20,7 @@ export default class TopBarGameObject extends GameObjects.Container
 
     this.setX(centerX)
 
-    const topBarImage = this.scene.add.image(0, 0, 'top-bar-bg')
+    const topBarImage = this.scene.add.image(0, 0, this.imageBg)
       .setOrigin(.5, 0)
       .setScale(.32)
 

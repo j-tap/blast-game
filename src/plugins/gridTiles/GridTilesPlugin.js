@@ -9,8 +9,8 @@ export default class GridTilesPlugin extends Plugins.BasePlugin
     pluginManager.registerGameObject('gridTiles', this.create)
   }
 
-  create (options)
+  create (x, y, options)
   {
-    return this.displayList.add(new GridTilesGameObject(this.scene, options))
+    return this.displayList.add(new GridTilesGameObject(this.scene, x, y, options))
   }
 }

@@ -8,6 +8,7 @@ import GridTilesPlugin from '@/plugins/gridTiles/GridTilesPlugin'
 import TileItemPlugin from '@/plugins/tileItem/TileItemPlugin'
 import ScoreBarPlugin from '@/plugins/scoreBar/ScoreBarPlugin'
 import TopBarPlugin from '@/plugins/topBar/TopBarPlugin'
+import BonusBlockPlugin from '@/plugins/bonusBlock/BonusBlockPlugin'
 
 import SceneBoot from '@/scenes/SceneBoot'
 import ScenePreload from '@/scenes/ScenePreload'
@@ -29,6 +30,7 @@ const config = {
       { key: 'TileItemPlugin', plugin: TileItemPlugin, start: true },
       { key: 'ScoreBarPlugin', plugin: ScoreBarPlugin, start: true },
       { key: 'TopBarPlugin', plugin: TopBarPlugin, start: true },
+      { key: 'BonusBlockPlugin', plugin: BonusBlockPlugin, start: true },
     ],
   },
   scene: [

@@ -4,17 +4,15 @@ import GridService from '@/services/GridService'
 
 export default class GridTilesGameObject extends GameObjects.Container
 {
-  constructor(scene, { grid, tiles, minSimilarTiles })
+  constructor(scene, x, y, { grid, tiles, minTilesTarget })
   {
-    super(scene, 'gridTiles')
+    super(scene, x, y)
 
     this.scene = scene
-    this.x = 20
-    this.y = 120
     this.imageBg = 'grid-bg'
     this.grid = grid
     this.tilesFrames = tiles
-    this.minSimilarTiles = minSimilarTiles
+    this.minTilesTarget = minTilesTarget
 
     this.scene.gridService = new GridService({
       frames: this.tilesFrames,
@@ -47,22 +45,28 @@ export default class GridTilesGameObject extends GameObjects.Container
       .createGeometryMask()
 
     this.containerTiles.setMask(tilesMask)
+
+    this.scene.time.delayedCall(200, () =>
+    {
+      this.containerTiles.setData({ allowFall: true })
+    })
   }
 
-  #tileClickHandler ({ tile, tilesSimilar })
+  #tileClickHandler ({ tile })
   {
-    const isCondition = tilesSimilar.length >= this.minSimilarTiles
+    const tilesTarget = this.getSelectedTiles(tile)
+    const isCondition = tilesTarget.length >= this.minTilesTarget
 
     if (isCondition)
     {
-      this.scene.gridService.removeTiles(tilesSimilar)
+      this.scene.gridService.removeTiles(tilesTarget)
     }
     else {
       const tileObject = this.containerTiles.getByName(tile.name)
       tileObject.unposible()
     }
 
-    this.emit('clickOnTile', { tile, tilesSimilar, isCondition })
+    this.emit('clickOnTile', { tile, tilesTarget, isCondition })
   }
 
   #createTileObject (tile)
@@ -71,6 +75,22 @@ export default class GridTilesGameObject extends GameObjects.Container
       .on('click', (...arg) => this.#tileClickHandler(...arg))
 
     this.containerTiles.add(tileObject)
+  }
+
+  getSelectedTiles (tile)
+  {
+    const bonusName = this.scene.bonusesService.getActive()
+
+    if (bonusName)
+    {
+      const bonus = this.scene.bonusesService.getBonus(bonusName)
+      if (bonus.name === 'bomb')
+      {
+        const { params } = bonus.accept()
+        return this.scene.gridService.getNearestTilesRadius(tile, params.range)
+      }
+    }
+    return this.scene.gridService.getNearestTilesByType(tile)
   }
 
   gridUpdate ()

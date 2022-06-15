@@ -1,6 +1,8 @@
 import { Scene } from 'phaser'
 
 import configGame from '@/configs/game'
+import GameService from '@/services/GameService'
+import ScoresService from '@/services/ScoresService'
 
 export default class SceneGame extends Scene
 {
@@ -12,7 +14,8 @@ export default class SceneGame extends Scene
 
   create ()
   {
-    //
+    this.gameService = new GameService()
+    this.scoresService = new ScoresService()
   }
 
   update ()
