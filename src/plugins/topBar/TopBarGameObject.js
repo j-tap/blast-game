@@ -15,16 +15,13 @@ export default class TopBarGameObject extends GameObjects.Container
 
   #draw ()
   {
-    const { centerX } = this.scene.cameras.main
     const { fontFamily, colorTextBar } = this.scene.configGame
 
-    this.setX(centerX)
-
-    const topBarImage = this.scene.add.image(0, 0, this.imageBg)
+    const imagebg = this.scene.add.image(0, 0, this.imageBg)
       .setOrigin(.5, 0)
       .setScale(.32)
 
-    const topBarProgressText = this.scene.make.text({
+    const textTitle = this.scene.make.text({
         x: 0,
         y: 6,
         text: 'Progress',
@@ -40,7 +37,8 @@ export default class TopBarGameObject extends GameObjects.Container
         width: this.widthProgress,
       })
 
-    this.add([topBarImage, topBarProgressText, this.progress])
+    this.add([imagebg, textTitle, this.progress])
+    this.setSize(imagebg.displayWidth, imagebg.displayHeight)
   }
 
   updateProgress (value)

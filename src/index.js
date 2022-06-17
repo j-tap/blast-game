@@ -1,4 +1,4 @@
-import { Game } from 'phaser'
+import AppGame from '@/objects/AppGame'
  
 import configPhaser from '@/configs/phaser'
 
@@ -22,6 +22,7 @@ require('@/assets/styles/index.styl')
 
 const config = {
   ...configPhaser,
+
   plugins: {
     global: [
       { key: 'BtnPlugin', plugin: BtnPlugin, start: true },
@@ -44,4 +45,14 @@ const config = {
   ],
 }
 
-new Game(config)
+window.addEventListener('load', () =>
+{
+  const game = new AppGame(config)
+
+  window.addEventListener('resize', () =>
+  {
+    game.resize()
+  })
+
+  game.resize()
+})

@@ -1,13 +1,9 @@
-import bonusModel from '@/models/BonusModel'
-
 export default class Bonus
 {
   #params
 
-  constructor ({ name, title, amount, params })
+  constructor ({ name = null, title = null, amount = 0, params = {} })
   {
-    Object.assign(this, bonusModel)
-    this.model = bonusModel
     this.name = name
     this.title = title
     this.amount = amount

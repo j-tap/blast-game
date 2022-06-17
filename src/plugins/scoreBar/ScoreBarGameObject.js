@@ -7,7 +7,7 @@ export default class ScoreBarGameObject extends GameObjects.Container
     super(scene, x, y)
 
     this.options = options
-    this.imageBg = 'score-bg'
+    this.imageBgName = 'score-bg'
 
     this.#draw()
   }
@@ -17,12 +17,12 @@ export default class ScoreBarGameObject extends GameObjects.Container
     const { fontFamily, colorTextBar } = this.scene.configGame
     const color = colorTextBar
 
-    const scoreImage = this.scene.add.image(0, 0, this.imageBg)
+    this.imageBg = this.scene.add.image(0, 0, this.imageBgName)
       .setOrigin(0, 0)
       .setScale(.32)
 
-    const movesText = this.scene.make.text({
-        x: scoreImage.displayWidth / 2,
+    this.textMove = this.scene.make.text({
+        x: this.imageBg.displayWidth / 2,
         y: 50,
         style: {
           fontSize: 80,
@@ -30,11 +30,11 @@ export default class ScoreBarGameObject extends GameObjects.Container
           color,
         },
       })
-      .setName('movesText')
+      .setName('textMove')
       .setOrigin(.5, 0)
 
-    const scoreTitleText = this.scene.make.text({
-        x: scoreImage.displayWidth / 2,
+    this.textTitle = this.scene.make.text({
+        x: this.imageBg.displayWidth / 2,
         y: 215,
         text: 'Score:',
         style: {
@@ -45,8 +45,8 @@ export default class ScoreBarGameObject extends GameObjects.Container
       })
       .setOrigin(.5, 0)
 
-    const scoreNumText = this.scene.make.text({
-        x: scoreImage.displayWidth / 2,
+    this.textScoreNum = this.scene.make.text({
+        x: this.imageBg.displayWidth / 2,
         y: 245,
         text: '150',
         style: {
@@ -55,22 +55,19 @@ export default class ScoreBarGameObject extends GameObjects.Container
           color,
         },
       })
-      .setName('scoresNumText')
       .setOrigin(.5, 0)
 
-    this.add([scoreImage, movesText, scoreTitleText, scoreNumText])
-    this.setSize(scoreImage.displayWidth, scoreImage.displayHeight)
+    this.add([this.imageBg, this.textMove, this.textTitle, this.textScoreNum])
+    this.setSize(this.imageBg.displayWidth, this.imageBg.displayHeight)
   }
 
   updateMove (value)
   {
-    this.getByName('movesText')
-      .setText(`${value}`)
+    this.textMove.setText(`${value}`)
   }
 
   updateScore (value)
   {
-    this.getByName('scoresNumText')
-      .setText(`${value}`)
+    this.textScoreNum.setText(`${value}`)
   }
 }

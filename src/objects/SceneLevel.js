@@ -31,6 +31,9 @@ export default class SceneLevel extends SceneGame
   {
     super.create()
 
+    this.padding = 20
+    this.bonusesBlocks = {}
+
     this.scoresService.init({
       scoresTarget: this.targetScoresCount,
       movesLimit: this.maxMovesCount,
@@ -53,7 +56,7 @@ export default class SceneLevel extends SceneGame
         this.bonusesBlocks[name].update(bonus)
       })
 
-    this.grid.gridUpdate()
+    this.grid.update()
   }
 
   audioManage ()
@@ -66,11 +69,58 @@ export default class SceneLevel extends SceneGame
 
   draw ()
   {
-    this.bonusesBlocks = []
-    const { fontFamily, colorTextBar } = this.configGame
-    const { width } = this.cameras.main
+    const { width } = this.game.scale
+
+    this.containerRight = this.add.container(width / 2 + 150, 0)
+
+    this.#drawTopBar()
+    this.#drawGrid()
+    this.#drawScoreBar()
+    this.#drawBonuses()
+  }
+
+  #drawTopBar ()
+  {
+    const { width } = this.game.scale
+    this.topBar = this.add.topBar(width / 2, 0)
+
+    this.containerRight.setY(this.topBar.displayHeight + this.padding)
+  }
+
+  #drawGrid ()
+  {
+    const { width } = this.game.scale
+    const x = 0
+    const y = this.topBar.displayHeight + this.padding
+
+    this.grid = this.add.gridTiles(x, y, this.gridTilesParams)
+      .on('clickOnTile', (...args) => this.clickOnTile(...args))
+
+    this.grid.setX(width / 2 - (this.grid.displayWidth - 6))
+  }
+
+  #drawScoreBar ()
+  {
+    const x = 0
+    const y = 50
+
+    this.scoreBar = this.add.scoreBar(x, y)
+    this.containerRight.add(this.scoreBar)
+      .setSize(this.scoreBar.displayWidth, this.scoreBar.displayHeight * 2)
+  }
+
+  #drawBonuses ()
+  {
+    const title = 'Bonuses:'
     const bonuses = this.bonusesService.getBonusesList()
-    const padding = 20
+
+    if (!bonuses.length) return
+
+    const { fontFamily, colorTextBar } = this.configGame
+    const yTitle = this.scoreBar.displayHeight + this.padding + 40
+    const width = this.containerRight.displayWidth
+    console.log(width);
+    
     const styleText = {
       fontFamily,
       fontSize: 24,
@@ -78,35 +128,19 @@ export default class SceneLevel extends SceneGame
       color: colorTextBar,
     }
 
-    this.topBar = this.add.topBar()
+    this.textTitle = this.add.text(width / 2, yTitle, title, styleText)
+      .setOrigin(.5, 0)
 
-    this.grid = this.add.gridTiles(padding, 120, this.gridTilesParams)
-      .on('clickOnTile', (tile) => this.clickOnTile(tile))
-
-    this.scoreBar = this.add.scoreBar(0, 160)
-    this.scoreBar.setX(width - this.scoreBar.displayWidth - padding)
-
-    if (bonuses.length)
-    {
-      this.add.text(
-          width - this.scoreBar.displayWidth / 2 - padding,
-          this.scoreBar.y + this.scoreBar.displayHeight + padding,
-          'Bonuses:',
-          styleText,
-        )
-        .setOrigin(.5, 0)
-    }
+    const yBonus = yTitle + this.textTitle.displayHeight + this.padding
 
     bonuses.forEach((bonus, i) =>
       {
-        const { displayWidth, displayHeight, y } = this.scoreBar
-        const bonusY = y + displayHeight + 60
-
-        this.bonusesBlocks[bonus.name] = this.add.bonusBlock(0, bonusY, bonus)
-
-        const bonusX = width - displayWidth - 70 + this.bonusesBlocks[bonus.name].displayWidth * i
-        this.bonusesBlocks[bonus.name].setX(bonusX)
+        this.bonusesBlocks[bonus.name] = this.add.bonusBlock(0, yBonus, bonus)
+        const x = this.bonusesBlocks[bonus.name].displayWidth * i
+        this.bonusesBlocks[bonus.name].setX(x)
       })
+
+    this.containerRight.add([this.textTitle, ...Object.values(this.bonusesBlocks)])
   }
 
   clickOnTile ({ isCondition, tilesTarget })

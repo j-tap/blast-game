@@ -1,4 +1,4 @@
-import Bonus from '@/objects/Bonus'
+import Bonus from '@/models/Bonus'
 
 export default class BonusesService
 {

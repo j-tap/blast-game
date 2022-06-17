@@ -8,10 +8,12 @@ export default class GridTilesGameObject extends GameObjects.Container
   {
     super(scene, x, y)
 
-    this.imageBg = 'grid-bg'
+    this.imageBgName = 'grid-bg'
     this.grid = grid
     this.tilesFrames = tiles
     this.minTilesTarget = minTilesTarget
+    this.padding = { x: 16, y: 13 }
+    this.prevPosition = { x: 0, y: 0 }
 
     this.scene.gridService = new GridService({
       frames: this.tilesFrames,
@@ -23,42 +25,51 @@ export default class GridTilesGameObject extends GameObjects.Container
 
   #draw ()
   {
-    const padding = { x: 16, y: 13 }
-    const gridImage = this.scene.add.image(0, 0, this.imageBg)
+    const imageBg = this.scene.add.image(0, 0, this.imageBgName)
       .setOrigin(0)
       .setScale(.32)
 
-    this.containerTiles = this.scene.add.container(this.x + padding.x, this.y + padding.y)
-      .setSize(gridImage.displayWidth, gridImage.displayHeight)
+    this.containerTiles = this.scene.add.container(this.padding.x, this.padding.y)
+      .setSize(imageBg.displayWidth, imageBg.displayHeight)
       .setDepth(1)
 
-    this.add(gridImage, this.containerTiles, tilesMask)
-
-    const tilesMask = this.scene.make.graphics()
-      .fillRect(
-        this.containerTiles.x,
-        this.containerTiles.y,
-        this.containerTiles.displayWidth - padding.x * 2,
-        this.containerTiles.displayHeight - padding.y * 2
-      )
-      .createGeometryMask()
-
-    this.containerTiles.setMask(tilesMask)
+    this.add([imageBg, this.containerTiles])
 
     this.scene.time.delayedCall(200, () =>
     {
       this.containerTiles.setData({ allowFall: true })
     })
+
+    this.setSize(imageBg.displayWidth, imageBg.displayHeight)
+
+    this.#drawMask()
+  }
+
+  #drawMask ()
+  {
+    this.containerTiles.clearMask()
+
+    const tilesMaskGraphic = this.scene.make.graphics()
+      .fillRect(
+        this.x + this.padding.x,
+        this.y + this.padding.y,
+        this.containerTiles.displayWidth - this.padding.x * 2,
+        this.containerTiles.displayHeight - this.padding.y * 2
+      )
+
+    this.containerTiles.setMask(tilesMaskGraphic.createGeometryMask())
   }
 
   #tileClickHandler ({ tile })
   {
-    const tilesTarget = this.getSelectedTiles(tile)
+    const { tilesTarget, bonus } = this.getSelectedTiles(tile)
     const isCondition = tilesTarget.length >= this.minTilesTarget
 
     if (isCondition)
     {
       this.scene.gridService.removeTiles(tilesTarget)
+      this.containerTiles.getByName(tile.name)
+        .setData('bonus', bonus)
     }
     else {
       const tileObject = this.containerTiles.getByName(tile.name)
@@ -76,23 +87,7 @@ export default class GridTilesGameObject extends GameObjects.Container
     this.containerTiles.add(tileObject)
   }
 
-  getSelectedTiles (tile)
-  {
-    const bonusName = this.scene.bonusesService.getActive()
-
-    if (bonusName)
-    {
-      const bonus = this.scene.bonusesService.getBonus(bonusName)
-      if (bonus.name === 'bomb')
-      {
-        const { params } = bonus.accept()
-        return this.scene.gridService.getNearestTilesRadius(tile, params.range)
-      }
-    }
-    return this.scene.gridService.getNearestTilesByType(tile)
-  }
-
-  gridUpdate ()
+  #updateTiles ()
   {
     const tilesObjects = this.containerTiles.getAll()
 
@@ -123,5 +118,40 @@ export default class GridTilesGameObject extends GameObjects.Container
         }
       }
     })
+  }
+
+  #updatePositionGrid ()
+  {
+    if (this.prevPosition.x !== this.x)
+    {
+      this.#drawMask()
+    }
+
+    this.prevPosition.x = this.x
+    this.prevPosition.y = this.y
+  }
+
+  getSelectedTiles (tile)
+  {
+    const bonusName = this.scene.bonusesService.getActive()
+
+    if (bonusName)
+    {
+      const bonus = this.scene.bonusesService.getBonus(bonusName)
+      if (bonus.name === 'bomb')
+      {
+        const { params } = bonus.accept()
+        const tilesTarget = this.scene.gridService.getNearestTilesRadius(tile, params.range)
+        return { tilesTarget, bonus }
+      }
+    }
+    const tilesTarget = this.scene.gridService.getNearestTilesByType(tile)
+    return { tilesTarget }
+  }
+
+  update ()
+  {
+    this.#updatePositionGrid()
+    this.#updateTiles()
   }
 }

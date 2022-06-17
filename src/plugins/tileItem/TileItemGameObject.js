@@ -5,7 +5,15 @@ export default class TileItemGameObject extends GameObjects.Image
   constructor(scene, { tile })
   {
     const key = 'tiles-spr'
-    const { frame, type, color, colorName, posOnGrid, name, empty } = tile
+    const {
+      frame,
+      type,
+      color,
+      colorName,
+      name,
+      empty,
+      posOnGrid = { x: 0, y: 0 },
+    } = tile
 
     super(scene, 0, 0, key, frame)
 
@@ -14,7 +22,7 @@ export default class TileItemGameObject extends GameObjects.Image
     this.color = color
     this.posOnGrid = {
       x: posOnGrid.x,
-      y:posOnGrid.y,
+      y: posOnGrid.y,
     }
     this.name = name
     this.empty = empty
@@ -79,20 +87,28 @@ export default class TileItemGameObject extends GameObjects.Image
     const emitter = this.scene.add.particles(particlesSprite)
       .setDepth(2)
 
-    this.particles.destroyEmitter = emitter.createEmitter({
+    const particlesConfig = {
       x: this.x + this.displayWidth / 2,
       y: this.y + this.displayHeigth / 2,
       on: false,
       blendMode: 'ADD',
-      lifespan: 2000,
+      lifespan: 600,
       alpha: { 'start': 1, 'end': 0 },
       speed: { 'min': 0, 'max': 200 },
       scale: { 'start': .4, 'end': 0 },
-      gravityY: 600,
+      gravityY: 300,
       bounce: 1,
-      maxParticles: 15,
+      maxParticles: 5,
       tint: [this.color],
       frame: ['particle-1'],
+    }
+
+    this.particles.destroyEmitter = emitter.createEmitter(particlesConfig)
+    this.particles.bombEmitter = emitter.createEmitter({
+      ...particlesConfig,
+      gravityY: 0,
+      maxParticles: particlesConfig * 10,
+      speed: 600,
     })
   }
 
@@ -162,8 +178,11 @@ export default class TileItemGameObject extends GameObjects.Image
     if (!this.tweens.destroyTween.isPlaying())
     {
       const { tx, ty } = this.getWorldTransformMatrix()
+      const bonus = this.getData('bonus')
+      const name = bonus ? bonus.name : 'destroy'
 
-      this.particles.destroyEmitter.explode(100, tx, ty)
+      this.particles[`${name}Emitter`]
+        .explode(100, tx, ty)
 
       this.tweens.destroyTween
         .on('complete', () =>

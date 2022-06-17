@@ -37,12 +37,13 @@ export default class ScenePreload extends SceneGame
     this.load.image('red-btn', redBtnImg)
     this.load.image('score-bg', scoreBgImg)
     this.load.image('top-bar-bg', topBarBgImg)
+
     this.load.atlas('tiles-spr', tilesSprImg, tilesJson)
+    this.load.atlas('particles-spr', particlesSpr, particlesJson)
+    
     this.load.audio('tile-click', [tileClickSound])
     this.load.audio('main-music', [mainMusicSound])
-
     this.load.audio('defeat-sound', [defeatSound])
-    this.load.atlas('particles-spr', particlesSpr, particlesJson)
     this.load.audio('win-sound', [winSound])
   }
 
